@@ -76,7 +76,14 @@ func Import(ctx context.Context, source io.Reader, store *db.Store) (Result, err
 		}
 		if _, err := store.CreateLead(ctx, input); err != nil {
 			var fields lead.FieldErrors
-			if errors.As(err, &fields) {
+			switch {
+			case errors.Is(err, db.ErrDuplicateEmail):
+				result.Skipped = append(result.Skipped, Diagnostic{
+					Line: line,
+					Err:  lead.FieldErrors{"email": "duplicate email"},
+				})
+				continue
+			case errors.As(err, &fields):
 				result.Skipped = append(result.Skipped, Diagnostic{Line: line, Err: fields})
 				continue
 			}

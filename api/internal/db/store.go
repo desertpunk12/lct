@@ -39,6 +39,12 @@ func (s *Store) Close() error {
 	return s.conn.Close()
 }
 
+// ErrDuplicateEmail reports a violation of the leads' unique email index.
+var ErrDuplicateEmail = errors.New("duplicate email")
+
+// CreateLead normalizes and validates input so every creation path applies
+// the same rules, then persists the lead. Validation failures are returned as
+// lead.FieldErrors; a repeat email as ErrDuplicateEmail.
 func (s *Store) CreateLead(ctx context.Context, input lead.Input) (lead.Lead, error) {
 	input.Normalize()
 	if fields := input.Validate(); len(fields) > 0 {
@@ -70,7 +76,7 @@ func (s *Store) CreateLead(ctx context.Context, input lead.Input) (lead.Lead, er
 	if err != nil {
 		var sqliteErr *sqlite.Error
 		if errors.As(err, &sqliteErr) && sqliteErr.Code() == sqlite3.SQLITE_CONSTRAINT_UNIQUE {
-			return lead.Lead{}, lead.FieldErrors{"email": "duplicate email"}
+			return lead.Lead{}, ErrDuplicateEmail
 		}
 		return lead.Lead{}, fmt.Errorf("insert lead: %w", err)
 	}

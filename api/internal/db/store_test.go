@@ -112,9 +112,8 @@ func TestDuplicateEmail(t *testing.T) {
 	duplicate.Email = "zoe@EXAMPLE.com"
 	duplicate.FirstName = "Must not overwrite"
 	_, err = store.CreateLead(ctx, duplicate)
-	var fields lead.FieldErrors
-	if !errors.As(err, &fields) || fields["email"] != "duplicate email" {
-		t.Fatalf("expected duplicate email field error, got %v", err)
+	if !errors.Is(err, db.ErrDuplicateEmail) {
+		t.Fatalf("expected duplicate email error, got %v", err)
 	}
 	leads, err := store.ListLeads(ctx)
 	if err != nil {

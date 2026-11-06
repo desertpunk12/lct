@@ -58,9 +58,15 @@ func TestImportCommand(t *testing.T) {
 }
 
 func TestCommandArguments(t *testing.T) {
-	cases := [][]string{nil, {"import"}, {"import", "one.csv", "two.csv"}, {"unknown", "file.csv"}}
+	cases := [][]string{
+		nil,
+		{"import"},
+		{"import", "one.csv", "two.csv"},
+		{"unknown", "file.csv"},
+		{"serve", "--port", "9090"},
+	}
 	for _, args := range cases {
-		if err := run(context.Background(), args, io.Discard, io.Discard); err == nil || err.Error() != "usage: leads import <file>" {
+		if err := run(context.Background(), args, io.Discard, io.Discard); err == nil || err.Error() != "usage: leads import <file> | leads serve" {
 			t.Errorf("args %v: got %v", args, err)
 		}
 	}
