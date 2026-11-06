@@ -12,6 +12,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    outDir: '../api/cmd/leads/dist',
+    emptyOutDir: true,
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:8080',
