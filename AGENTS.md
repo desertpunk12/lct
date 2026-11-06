@@ -73,4 +73,4 @@ Go tests live alongside the code they exercise.
 - Test validation boundaries, CSV diagnostics, persistence, and HTTP contracts.
 - Verify implementation changes with `make test`, `make build`, and
   `npm --prefix web run lint`; report checks not run.
-- Record decisions, next steps, and an actual rejected AI suggestion in `NOTES.md`.
+- Never modify `NOTES.md`.
